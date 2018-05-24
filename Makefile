@@ -81,7 +81,7 @@ $(BIN_DIR):
 
 $(RUN_SCRIPT): Makefile
 	echo "#!/bin/sh" > $@
-	echo "$(JAVA) -cp \"$(CLASSPATH)\" hastabel2idp.Main $$*" >> $@
+	echo "$(JAVA) -cp \"$(CLASSPATH)\" hastabel2idp.Main \$$*" >> $@
 	chmod +x $@
 
 ##### For my private use...

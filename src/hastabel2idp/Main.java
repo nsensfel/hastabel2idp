@@ -11,6 +11,8 @@ public class Main
       final Parameters params;
       final World world;
 
+      System.out.println("#### HaStABeL to IDP ####");
+      System.out.println("# Parsing parameters...");
       params = new Parameters(args);
 
       if (!params.are_valid())
@@ -40,6 +42,7 @@ public class Main
          }
       }
 
+      System.out.println("# Modeling graphs in first-order...");
       world.ensure_first_order();
 
       if (!world.is_valid())
@@ -47,6 +50,7 @@ public class Main
          return;
       }
 
+      System.out.println("# Loading property...");
       try
       {
          world.load_property(params.get_property_file());
@@ -63,12 +67,15 @@ public class Main
 
          world.invalidate();
       }
+
+      System.out.println("# Done.");
    }
 
    private static void load_file (final World world, final String filename)
    {
       try
       {
+         System.out.println("# Loading \"" + filename + "\"...");
          world.load(filename);
       }
       catch (final IOException ioe)
