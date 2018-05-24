@@ -4,6 +4,7 @@ BIN_DIR ?= ${CURDIR}/bin/
 LIB_DIR ?= ${CURDIR}/lib/
 
 TARGET ?= hastabel2idp.jar
+RUN_SCRIPT ?= hastabel2idp.sh
 INSTALL_DIR ?= $(LIB_DIR)
 
 #### Where to get the missing Jar files.
@@ -50,12 +51,12 @@ CLASSPATH = "$(SRC_DIR):$(BIN_DIR):$(ANTLR_JAR):$(HASTABEL_JAR)"
 
 ## Makefile Magic ##############################################################
 JAVA_SOURCES = \
-	$(wildcard $(SRC_DIR)/hastabel/*.java) \
-	$(wildcard $(SRC_DIR)/hastabel/*/*.java)
+	$(wildcard $(SRC_DIR)/hastabel2idp/*.java) \
+	$(wildcard $(SRC_DIR)/hastabel2idp/*/*.java)
 CLASSES = $(patsubst $(SRC_DIR)/%,$(BIN_DIR)/%, $(JAVA_SOURCES:.java=.class))
 
 ## Makefile Rules ##############################################################
-$(TARGET): $(ANTLR_JAR) $(HASTABEL_JAR) $(JAVA_SOURCES) $(CLASSES)
+$(TARGET): $(ANTLR_JAR) $(HASTABEL_JAR) $(JAVA_SOURCES) $(CLASSES) $(RUN_SCRIPT)
 	rm -f $(TARGET) $(INSTALL_DIR)/$@
 	$(JAR) cf $@ -C $(BIN_DIR) .
 	cp $@ $(INSTALL_DIR)/$@
@@ -77,6 +78,11 @@ $(LIB_DIR):
 
 $(BIN_DIR):
 	mkdir -p $@
+
+$(RUN_SCRIPT): Makefile
+	echo "#!/bin/sh" > $@
+	echo "$(JAVA) -cp \"$(CLASSPATH)\" hastabel2idp.Main $$*" >> $@
+	chmod +x $@
 
 ##### For my private use...
 publish: $(TARGET)
