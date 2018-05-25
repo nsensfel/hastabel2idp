@@ -26,10 +26,17 @@ public class Main
 
       if (!world.is_valid())
       {
+         System.out.println("# Failure.");
+
          return;
       }
 
       write_idp(world, params);
+
+      if (!world.is_valid())
+      {
+         return;
+      }
 
       System.out.println("# Done.");
    }
