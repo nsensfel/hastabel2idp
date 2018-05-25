@@ -22,6 +22,45 @@ public class Main
 
       world = new World();
 
+      load_model(world, params);
+
+      if (!world.is_valid())
+      {
+         return;
+      }
+
+      write_idp(world, params);
+
+      System.out.println("# Done.");
+   }
+
+   private static void load_file (final World world, final String filename)
+   {
+      try
+      {
+         System.out.println("# Loading \"" + filename + "\"...");
+         world.load(filename);
+      }
+      catch (final IOException ioe)
+      {
+         System.err.println
+         (
+            "[E] IOException when loading \""
+            + filename
+            + "\":\n"
+            + ioe.getMessage()
+         );
+
+         world.invalidate();
+      }
+   }
+
+   private static void load_model
+   (
+      final World world,
+      final Parameters params
+   )
+   {
       for (final String level_file: params.get_level_files())
       {
          load_file(world, level_file);
@@ -67,28 +106,18 @@ public class Main
 
          world.invalidate();
       }
-
-      System.out.println("# Done.");
    }
 
-   private static void load_file (final World world, final String filename)
+   private static void write_idp
+   (
+      final World world,
+      final Parameters params
+   )
    {
-      try
-      {
-         System.out.println("# Loading \"" + filename + "\"...");
-         world.load(filename);
-      }
-      catch (final IOException ioe)
-      {
-         System.err.println
-         (
-            "[E] IOException when loading \""
-            + filename
-            + "\":\n"
-            + ioe.getMessage()
-         );
+      System.out.println("# Generating IDP...");
 
-         world.invalidate();
-      }
+      IDP.generate(world, params);
+
+      OutputFile.close_all();
    }
 }
