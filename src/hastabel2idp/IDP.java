@@ -7,7 +7,6 @@ import hastabel.lang.Type;
 import hastabel.lang.Element;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.List;
 
 public class IDP
@@ -63,12 +62,26 @@ public class IDP
       {
          if (predicate.is_used())
          {
-            final Set<List<Type>> relevant_signatures;
+            final Collection<List<Type>> relevant_signatures, partial_signatures;
 
             relevant_signatures = predicate.get_relevant_signatures();
+            partial_signatures = predicate.get_partial_signatures();
 
-            add_predicate_to_vocabulary(vocabulary, predicate, relevant_signatures);
-            add_predicate_to_structure(structure, predicate, relevant_signatures);
+            add_predicate_to_vocabulary
+            (
+               vocabulary,
+               predicate,
+               relevant_signatures,
+               partial_signatures
+            );
+
+            add_predicate_to_structure
+            (
+               structure,
+               predicate,
+               relevant_signatures,
+               partial_signatures
+            );
          }
       }
 
@@ -130,102 +143,169 @@ public class IDP
       structure.insert_newline();
    }
 
+   private static void add_predicate_signature_to_vocabulary
+   (
+      final OutputFile vocabulary,
+      final Predicate predicate,
+      final List<Type> signature
+   )
+   {
+      boolean is_first;
+
+      is_first = true;
+
+      vocabulary.write("   ");
+      vocabulary.write(predicate.get_name());
+      vocabulary.write(signature_to_suffix(signature));
+      vocabulary.write("(");
+
+      for (final Type sig_type: signature)
+      {
+         if (sig_type == null)
+         {
+            continue;
+         }
+
+         if (is_first)
+         {
+            is_first = false;
+         }
+         else
+         {
+            vocabulary.write(", ");
+         }
+
+         vocabulary.write(sig_type.get_name());
+      }
+
+      vocabulary.write(")");
+      vocabulary.insert_newline();
+   }
+
    private static void add_predicate_to_vocabulary
    (
       final OutputFile vocabulary,
       final Predicate predicate,
-      final Set<List<Type>> relevant_signatures
+      final Collection<List<Type>> relevant_signatures,
+      final Collection<List<Type>> partial_signatures
    )
    {
       for (final List<Type> signature: relevant_signatures)
       {
-         boolean is_first;
+         add_predicate_signature_to_vocabulary
+         (
+            vocabulary,
+            predicate,
+            signature
+         );
+      }
 
-         is_first = true;
+      for (final List<Type> signature: partial_signatures)
+      {
+         add_predicate_signature_to_vocabulary
+         (
+            vocabulary,
+            predicate,
+            signature
+         );
+      }
+   }
 
-         vocabulary.write("   ");
-         vocabulary.write(predicate.get_name());
-         vocabulary.write(signature_to_suffix(signature));
-         vocabulary.write("(");
+   private static void add_predicate_signature_to_structure
+   (
+      final OutputFile structure,
+      final Predicate predicate,
+      final List<Type> signature,
+      final boolean is_partial
+   )
+   {
+      boolean is_first_member;
+      final Collection<List<Element>> relevant_members;
 
-         for (final Type sig_type:signature)
+      structure.write("   ");
+      structure.write(predicate.get_name());
+      structure.write(signature_to_suffix(signature));
+      structure.write("={");
+      structure.insert_newline();
+
+      is_first_member = true;
+
+      if (is_partial)
+      {
+         relevant_members = predicate.get_relevant_partial_members(signature);
+      }
+      else
+      {
+         relevant_members = predicate.get_relevant_members(signature);
+      }
+
+      for (final List<Element> member: relevant_members)
+      {
+         boolean is_first_member_param;
+
+         is_first_member_param = true;
+
+         if (is_first_member)
          {
-            if (is_first)
+            is_first_member = false;
+            structure.write("      ");
+         }
+         else
+         {
+            structure.write(";");
+            structure.insert_newline();
+            structure.write("      ");
+         }
+
+         for (final Element member_param: member)
+         {
+            if (is_first_member_param)
             {
-               is_first = false;
+               is_first_member_param = false;
             }
             else
             {
-               vocabulary.write(", ");
+               structure.write(", ");
             }
 
-            vocabulary.write(sig_type.get_name());
+            structure.write(member_param.get_name());
          }
-
-         vocabulary.write(")");
-         vocabulary.insert_newline();
       }
+
+      structure.insert_newline();
+      structure.write("   }");
+      structure.insert_newline();
+
    }
 
    private static void add_predicate_to_structure
    (
       final OutputFile structure,
       final Predicate predicate,
-      final Set<List<Type>> relevant_signatures
+      final Collection<List<Type>> relevant_signatures,
+      final Collection<List<Type>> partial_signatures
    )
    {
       for (final List<Type> signature: relevant_signatures)
       {
-         boolean is_first_member;
-
-         structure.write("   ");
-         structure.write(predicate.get_name());
-         structure.write(signature_to_suffix(signature));
-         structure.write("={");
-         structure.insert_newline();
-
-         is_first_member = true;
-
-         for
+         add_predicate_signature_to_structure
          (
-            final List<Element> member:
-               predicate.get_relevant_members(signature)
-         )
-         {
-            boolean is_first_member_param;
+            structure,
+            predicate,
+            signature,
+            false
+         );
+      }
 
-            is_first_member_param = true;
-
-            if (is_first_member)
-            {
-               is_first_member = false;
-               structure.write("      ");
-            }
-            else
-            {
-               structure.write(";");
-               structure.insert_newline();
-               structure.write("      ");
-            }
-
-            for (final Element member_param: member)
-            {
-               if (is_first_member_param)
-               {
-                  is_first_member_param = false;
-               }
-               else
-               {
-                  structure.write(", ");
-               }
-
-               structure.write(member_param.get_name());
-            }
-         }
-
-         structure.insert_newline();
-         structure.write("   }");
-         structure.insert_newline();
+      for (final List<Type> signature: partial_signatures)
+      {
+         add_predicate_signature_to_structure
+         (
+            structure,
+            predicate,
+            signature,
+            true
+         );
       }
    }
 
