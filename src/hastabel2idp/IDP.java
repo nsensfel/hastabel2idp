@@ -145,6 +145,7 @@ public class IDP
 
          vocabulary.write("   ");
          vocabulary.write(predicate.get_name());
+         vocabulary.write(signature_to_suffix(signature));
          vocabulary.write("(");
 
          for (final Type sig_type:signature)
@@ -173,54 +174,76 @@ public class IDP
       final Set<List<Type>> relevant_signatures
    )
    {
-      boolean is_first_member;
-
-      structure.write("   ");
-      structure.write(predicate.get_name());
-      structure.write("={");
-      structure.insert_newline();
-
-      is_first_member = true;
-
-      for
-      (
-         final List<Element> member:
-            predicate.get_relevant_members(relevant_signatures)
-      )
+      for (final List<Type> signature: relevant_signatures)
       {
-         boolean is_first_member_param;
+         boolean is_first_member;
 
-         is_first_member_param = true;
+         structure.write("   ");
+         structure.write(predicate.get_name());
+         structure.write(signature_to_suffix(signature));
+         structure.write("={");
+         structure.insert_newline();
 
-         if (is_first_member)
-         {
-            is_first_member = false;
-            structure.write("      ");
-         }
-         else
-         {
-            structure.write(";");
-            structure.insert_newline();
-            structure.write("      ");
-         }
+         is_first_member = true;
 
-         for (final Element member_param: member)
+         for
+         (
+            final List<Element> member:
+               predicate.get_relevant_members(signature)
+         )
          {
-            if (is_first_member_param)
+            boolean is_first_member_param;
+
+            is_first_member_param = true;
+
+            if (is_first_member)
             {
-               is_first_member_param = false;
+               is_first_member = false;
+               structure.write("      ");
             }
             else
             {
-               structure.write(", ");
+               structure.write(";");
+               structure.insert_newline();
+               structure.write("      ");
             }
 
-            structure.write(member_param.get_name());
+            for (final Element member_param: member)
+            {
+               if (is_first_member_param)
+               {
+                  is_first_member_param = false;
+               }
+               else
+               {
+                  structure.write(", ");
+               }
+
+               structure.write(member_param.get_name());
+            }
+         }
+
+         structure.insert_newline();
+         structure.write("   }");
+         structure.insert_newline();
+      }
+   }
+
+   private static String signature_to_suffix (final List<Type> signature)
+   {
+      final StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      for (final Type t: signature)
+      {
+         if (t != null)
+         {
+            sb.append("_");
+            sb.append(t.get_name());
          }
       }
 
-      structure.insert_newline();
-      structure.write("   }");
-      structure.insert_newline();
+      return sb.toString();
    }
 }
