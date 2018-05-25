@@ -2,9 +2,10 @@
 SRC_DIR ?= ${CURDIR}/src/
 BIN_DIR ?= ${CURDIR}/bin/
 LIB_DIR ?= ${CURDIR}/lib/
+TMP_DIR ?= /tmp/hastabel2idp_standalone.jar.build/
 
 TARGET ?= hastabel2idp.jar
-RUN_SCRIPT ?= hastabel2idp.sh
+STANDALONE ?= hastabel2idp_standalone.jar
 INSTALL_DIR ?= $(LIB_DIR)
 
 #### Where to get the missing Jar files.
@@ -20,11 +21,8 @@ JAVA ?= java
 ###### JDK binary
 JAVAC ?= javac
 
-###### ANTLR
-ANTLR_JAR ?= $(LIB_DIR)/antlr-4.7-complete.jar
-
 ###### HASTABEL
-HASTABEL_JAR ?= $(LIB_DIR)/hastabel.jar
+HASTABEL_JAR ?= $(LIB_DIR)/hastabel_standalone.jar
 
 ##### Downloader
 DOWNLOADER ?= wget
@@ -38,10 +36,6 @@ ifeq ($(strip $(JAVAC)),)
 $(error No Java compiler defined as parameter.)
 endif
 
-ifeq ($(strip $(ANTLR_JAR)),)
-$(error No ANTLR_JAR defined as parameter.)
-endif
-
 ifeq ($(strip $(HASTABEL_JAR)),)
 $(error No HASTABEL_JAR defined as parameter.)
 endif
@@ -50,15 +44,22 @@ endif
 CLASSPATH = "$(SRC_DIR):$(BIN_DIR):$(ANTLR_JAR):$(HASTABEL_JAR)"
 
 ## Makefile Magic ##############################################################
+MANIFEST = $(SRC_DIR)/Manifest.txt
+
 JAVA_SOURCES = \
 	$(wildcard $(SRC_DIR)/hastabel2idp/*.java) \
 	$(wildcard $(SRC_DIR)/hastabel2idp/*/*.java)
 CLASSES = $(patsubst $(SRC_DIR)/%,$(BIN_DIR)/%, $(JAVA_SOURCES:.java=.class))
 
 ## Makefile Rules ##############################################################
-$(TARGET): $(ANTLR_JAR) $(HASTABEL_JAR) $(JAVA_SOURCES) $(CLASSES) $(RUN_SCRIPT)
+$(STANDALONE): $(TMP_DIR) $(TARGET) $(ANTLR_JAR)
+	unzip -d $(TMP_DIR) -uo $(TARGET)
+	unzip -d $(TMP_DIR) -uo $(HASTABEL_JAR)
+	jar -cvfm $@ $(MANIFEST) -C $(TMP_DIR) .
+
+$(TARGET): $(HASTABEL_JAR) $(JAVA_SOURCES) $(CLASSES) $(MANIFEST)
 	rm -f $(TARGET) $(INSTALL_DIR)/$@
-	$(JAR) cf $@ -C $(BIN_DIR) .
+	$(JAR) cfm $@ $(MANIFEST) -C $(BIN_DIR) .
 	cp $@ $(INSTALL_DIR)/$@
 
 clean:
@@ -73,16 +74,14 @@ $(CLASSES): $(BIN_DIR)/%.class: $(SRC_DIR)/%.java $(BIN_DIR)
 	echo "Attempting to download missing jar '$@'..."
 	cd $(LIB_DIR); $(DOWNLOADER) "$(JAR_SOURCE)/$(notdir $@)"
 
+$(TMP_DIR):
+	mkdir -p $@
+
 $(LIB_DIR):
 	mkdir -p $@
 
 $(BIN_DIR):
 	mkdir -p $@
-
-$(RUN_SCRIPT): Makefile
-	echo "#!/bin/sh" > $@
-	echo "$(JAVA) -cp \"$(CLASSPATH)\" hastabel2idp.Main \$$*" >> $@
-	chmod +x $@
 
 ##### For my private use...
 publish: $(TARGET)
