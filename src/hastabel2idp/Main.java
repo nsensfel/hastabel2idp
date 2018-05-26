@@ -1,5 +1,7 @@
 package hastabel2idp;
 
+import hastabel2idp.idp.Project;
+
 import hastabel.World;
 
 import java.io.IOException;
@@ -37,6 +39,8 @@ public class Main
       {
          return;
       }
+
+      OutputFile.close_all();
 
       System.out.println("# Done.");
    }
@@ -121,10 +125,12 @@ public class Main
       final Parameters params
    )
    {
+      final Project project;
+
       System.out.println("# Generating IDP...");
 
-      IDP.generate(world, params);
+      project = new Project(params);
 
-      OutputFile.close_all();
+      project.generate(world);
    }
 }

@@ -8,7 +8,7 @@ public class Parameters
    private final List<String> level_files;
    private final List<String> model_files;
    private final String property_file;
-   private final String output_file;
+   private final String output_dir;
    private final boolean be_verbose;
 
    private final boolean are_valid;
@@ -19,9 +19,9 @@ public class Parameters
       (
          "HaStABeL to IDP\n"
          + "USAGE:\n"
-         + "\thastabel2idp.sh <OUTPUT_FILE> <FILES|OPTIONS>+\n"
+         + "\tjava -jar hastabel2idp.jar <OUTPUT_DIR> <FILES|OPTIONS>+\n"
          + "PARAMETERS:\n"
-         + "\t- <OUTPUT_FILE>\tFile to write the solutions in.\n"
+         + "\t- <OUTPUT_DIR>\tDirectory in which to write the IDP model.\n"
          + "\t- <FILES>\tList of files to be loaded.\n"
          + "OPTIONS:\n"
          + "\t- -v|--verbose\tPrint informative messages to STDOUT.\n"
@@ -49,7 +49,7 @@ public class Parameters
          print_usage();
 
          property_file = new String();
-         output_file = new String();
+         output_dir = new String();
 
          are_valid = false;
          be_verbose = false;
@@ -60,11 +60,11 @@ public class Parameters
       has_pro_file = false;
       has_error = false;
 
-      output_file = args[0];
+      output_dir = args[0];
 
       if
       (
-         (output_file.equals("-v") || output_file.equals("--verbose"))
+         (output_dir.equals("-v") || output_dir.equals("--verbose"))
          /* || ... */
       )
       {
@@ -80,9 +80,9 @@ public class Parameters
 
       if
       (
-         output_file.endsWith(".lvl")
-         || output_file.endsWith(".mod")
-         || output_file.endsWith(".pro")
+         output_dir.endsWith(".lvl")
+         || output_dir.endsWith(".mod")
+         || output_dir.endsWith(".pro")
       )
       {
          print_usage();
@@ -94,7 +94,7 @@ public class Parameters
             + " output file, meaning that one of the input files was about to"
             + " be written over. So likely, in fact, that we'll abort here. The"
             + " output file you indicated was \""
-            + output_file
+            + output_dir
             + "\"."
          );
 
@@ -179,9 +179,24 @@ public class Parameters
       return property_file;
    }
 
-   public String get_output_file ()
+   public String get_output_dir ()
    {
-      return output_file;
+      return output_dir;
+   }
+
+   public String get_theory_filename ()
+   {
+      return output_dir + "/theory.txt";
+   }
+
+   public String get_vocabulary_filename ()
+   {
+      return output_dir + "/vocabulary.txt";
+   }
+
+   public String get_structure_filename ()
+   {
+      return output_dir + "/structure.txt";
    }
 
    public boolean be_verbose ()
