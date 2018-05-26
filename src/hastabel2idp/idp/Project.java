@@ -4,6 +4,7 @@ import hastabel2idp.Parameters;
 
 import hastabel.World;
 
+import hastabel.lang.Formula;
 import hastabel.lang.Predicate;
 import hastabel.lang.Type;
 import hastabel.lang.Element;
@@ -24,7 +25,7 @@ public class Project
       theory = new Theory(params.get_theory_filename());
    }
 
-   public void generate (final World world)
+   public void generate (final World world, final Formula property)
    {
       final Collection<Type> types;
       final Collection<Predicate> predicates;

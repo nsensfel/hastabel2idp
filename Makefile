@@ -46,9 +46,7 @@ CLASSPATH = "$(SRC_DIR):$(BIN_DIR):$(ANTLR_JAR):$(HASTABEL_JAR)"
 ## Makefile Magic ##############################################################
 MANIFEST = $(SRC_DIR)/Manifest.txt
 
-JAVA_SOURCES = \
-	$(wildcard $(SRC_DIR)/hastabel2idp/*.java) \
-	$(wildcard $(SRC_DIR)/hastabel2idp/*/*.java)
+JAVA_SOURCES = $(shell find $(SRC_DIR)/hastabel2idp/ -name "*.java")
 CLASSES = $(patsubst $(SRC_DIR)/%,$(BIN_DIR)/%, $(JAVA_SOURCES:.java=.class))
 
 ## Makefile Rules ##############################################################

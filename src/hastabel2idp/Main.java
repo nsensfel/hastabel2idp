@@ -3,6 +3,7 @@ package hastabel2idp;
 import hastabel2idp.idp.Project;
 
 import hastabel.World;
+import hastabel.lang.Formula;
 
 import java.io.IOException;
 
@@ -12,6 +13,7 @@ public class Main
    {
       final Parameters params;
       final World world;
+      final Formula property;
 
       System.out.println("#### HaStABeL to IDP ####");
       System.out.println("# Parsing parameters...");
@@ -24,6 +26,8 @@ public class Main
 
       world = new World();
 
+      System.out.println("# Loading model...");
+
       load_model(world, params);
 
       if (!world.is_valid())
@@ -33,12 +37,20 @@ public class Main
          return;
       }
 
-      write_idp(world, params);
+      System.out.println("# Loading property...");
 
-      if (!world.is_valid())
+      property = load_property(world, params);
+
+      if ((!world.is_valid()) || (property == null))
       {
+         System.out.println("# Failure.");
+
          return;
       }
+
+      System.out.println("# Generating IDP...");
+
+      write_idp(world, property, params);
 
       OutputFile.close_all();
 
@@ -94,16 +106,17 @@ public class Main
 
       System.out.println("# Modeling graphs in first-order...");
       world.ensure_first_order();
+   }
 
-      if (!world.is_valid())
-      {
-         return;
-      }
-
-      System.out.println("# Loading property...");
+   private static Formula load_property
+   (
+      final World world,
+      final Parameters params
+   )
+   {
       try
       {
-         world.load_property(params.get_property_file());
+         return world.load_property(params.get_property_file());
       }
       catch (final IOException ioe)
       {
@@ -117,20 +130,22 @@ public class Main
 
          world.invalidate();
       }
+
+      return null;
    }
 
    private static void write_idp
    (
       final World world,
+      final Formula property,
       final Parameters params
    )
    {
       final Project project;
 
-      System.out.println("# Generating IDP...");
 
       project = new Project(params);
 
-      project.generate(world);
+      project.generate(world, property);
    }
 }
