@@ -68,8 +68,9 @@ public class Quantifier extends Formula
       sb.append(parent.get_name());
       sb.append(" [");
       sb.append(parent.get_type().get_name());
-      sb.append("]: ");
+      sb.append("]: (");
       sb.append(formula.toString());
+      sb.append(")");
 
       return sb.toString();
    }
