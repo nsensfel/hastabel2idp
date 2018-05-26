@@ -24,6 +24,13 @@ public class Theory
       out.insert_newline();
    }
 
+   public void add_formula (final hastabel.lang.Formula formula)
+   {
+      out.write(hastabel2idp.idp.lang.Formula.convert(formula).toString());
+      out.write(".");
+      out.insert_newline();
+   }
+
    public void write_footer ()
    {
       out.write("}");

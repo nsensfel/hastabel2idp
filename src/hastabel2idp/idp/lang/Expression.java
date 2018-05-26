@@ -23,7 +23,11 @@ public abstract class Expression
       final hastabel.lang.Expression hasta_f
    )
    {
-      if (hasta_f instanceof hastabel.lang.NamedExpression)
+      if (hasta_f == null)
+      {
+         return null;
+      }
+      else if (hasta_f instanceof hastabel.lang.NamedExpression)
       {
          return
             convert_named_expression

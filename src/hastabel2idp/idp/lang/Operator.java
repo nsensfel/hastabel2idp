@@ -55,4 +55,19 @@ public enum Operator
             return null;
       }
    }
+
+   @Override
+   public String toString ()
+   {
+      switch (this)
+      {
+         case NOT: return "~";
+         case AND: return "&";
+         case OR: return "|";
+         case IFF: return "<=>";
+         case IMPLIES: return "=>";
+      }
+
+      return "???";
+   }
 }

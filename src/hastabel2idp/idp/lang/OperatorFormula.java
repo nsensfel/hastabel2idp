@@ -26,4 +26,56 @@ class OperatorFormula extends Formula
    {
       return params;
    }
+
+   @Override
+   public boolean equals (Object o)
+   {
+      final OperatorFormula e;
+
+      if ((o == null) || !(o instanceof OperatorFormula))
+      {
+         return false;
+      }
+
+      e = (OperatorFormula) o;
+
+      return (e.parent.equals(parent) && e.params.equals(params));
+   }
+
+   @Override
+   public String toString ()
+   {
+      final StringBuilder sb;
+      boolean is_first;
+
+      sb = new StringBuilder();
+      is_first = true;
+
+      if (parent == Operator.NOT)
+      {
+         sb.append("~");
+      }
+
+      sb.append("(");
+
+      for (final Formula param: params)
+      {
+         if (is_first)
+         {
+            is_first = false;
+         }
+         else
+         {
+            sb.append(" ");
+            sb.append(parent.toString());
+            sb.append(" ");
+         }
+
+         sb.append(param.toString());
+      }
+
+      sb.append(")");
+
+      return sb.toString();
+   }
 }

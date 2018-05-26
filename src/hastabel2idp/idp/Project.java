@@ -73,6 +73,8 @@ public class Project
          }
       }
 
+      theory.add_formula(property);
+
       vocabulary.write_footer();
       structure.write_footer();
       theory.write_footer();

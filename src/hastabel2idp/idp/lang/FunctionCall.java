@@ -29,4 +29,50 @@ class FunctionCall extends Expression
    {
       return params;
    }
+
+   @Override
+   public boolean equals (Object o)
+   {
+      final FunctionCall e;
+
+      if ((o == null) || !(o instanceof FunctionCall))
+      {
+         return false;
+      }
+
+      e = (FunctionCall) o;
+
+      return (e.parent.equals(parent) && e.params.equals(params));
+   }
+
+   @Override
+   public String toString ()
+   {
+      final StringBuilder sb;
+      boolean is_first;
+
+      is_first = true;
+      sb = new StringBuilder();
+
+      sb.append(parent.get_name());
+      // TODO: add signature suffix
+
+      for (final Expression param: params)
+      {
+         if (is_first)
+         {
+            is_first = false;
+         }
+         else
+         {
+            sb.append(",");
+         }
+
+         sb.append(param.toString());
+      }
+
+      sb.append(")");
+
+      return sb.toString();
+   }
 }
