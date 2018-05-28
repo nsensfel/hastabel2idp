@@ -43,7 +43,6 @@ public class HastabelResult
    {
       add_solution_to_level(predicate, signature);
       add_solution_to_model(predicate, idp_solution);
-      level.write(predicate);
    }
 
    private void add_solution_to_level
