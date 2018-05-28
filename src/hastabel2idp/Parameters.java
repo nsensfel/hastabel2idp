@@ -186,17 +186,22 @@ public class Parameters
 
    public String get_theory_filename ()
    {
-      return output_dir + "/theory.txt";
+      return output_dir + "/03_theory.txt";
    }
 
    public String get_vocabulary_filename ()
    {
-      return output_dir + "/vocabulary.txt";
+      return output_dir + "/00_vocabulary.txt";
+   }
+
+   public String get_vocabulary_out_filename ()
+   {
+      return output_dir + "/02_vocabulary.txt";
    }
 
    public String get_structure_filename ()
    {
-      return output_dir + "/structure.txt";
+      return output_dir + "/01_structure.txt";
    }
 
    public boolean be_verbose ()

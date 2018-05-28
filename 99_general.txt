@@ -1,0 +1,4 @@
+procedure main(){
+	printmodels(allmodels(T,S,Vout))
+}
+

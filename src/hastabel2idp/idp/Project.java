@@ -14,12 +14,14 @@ import java.util.List;
 
 public class Project
 {
+   private final VocabularyOut vocabulary_out;
    private final Vocabulary vocabulary;
    private final Structure structure;
    private final Theory theory;
 
    public Project (final Parameters params)
    {
+      vocabulary_out = new VocabularyOut(params.get_vocabulary_out_filename());
       vocabulary = new Vocabulary(params.get_vocabulary_filename());
       structure = new Structure(params.get_structure_filename());
       theory = new Theory(params.get_theory_filename());
@@ -39,6 +41,7 @@ public class Project
       predicates = world.get_predicates_manager().get_all();
 
       vocabulary.write_header();
+      vocabulary_out.write_header();
       structure.write_header();
       theory.write_header();
 
@@ -85,6 +88,19 @@ public class Project
          property
       );
 
+      vocabulary.add_target_predicate
+      (
+         property_name,
+         world.get_variables_manager().get_all_seeked()
+      );
+
+      vocabulary_out.add_target_predicate
+      (
+         property_name,
+         world.get_variables_manager().get_all_seeked()
+      );
+
+      vocabulary_out.write_footer();
       vocabulary.write_footer();
       structure.write_footer();
       theory.write_footer();

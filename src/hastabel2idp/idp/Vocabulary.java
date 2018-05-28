@@ -5,6 +5,7 @@ import hastabel2idp.OutputFile;
 import hastabel.lang.Predicate;
 import hastabel.lang.Type;
 import hastabel.lang.Element;
+import hastabel.lang.Variable;
 
 import java.util.Collection;
 import java.util.List;
@@ -91,5 +92,37 @@ public class Vocabulary
       {
          add_predicate_signature(predicate, signature);
       }
+   }
+
+   public void add_target_predicate
+   (
+      final String name,
+      final List<Variable> arguments
+   )
+   {
+      boolean is_first;
+
+      is_first = true;
+
+      out.write("   ");
+      out.write(name);
+      out.write("(");
+
+      for (final Variable argument: arguments)
+      {
+         if (is_first)
+         {
+            is_first = false;
+         }
+         else
+         {
+            out.write(", ");
+         }
+
+         out.write(argument.get_type().get_name());
+      }
+
+      out.write(")");
+      out.insert_newline();
    }
 }
