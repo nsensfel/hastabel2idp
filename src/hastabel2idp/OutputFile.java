@@ -24,6 +24,14 @@ public class OutputFile
       }
    }
 
+   public static void flush_all ()
+   {
+      for (final OutputFile f: ALL_OUTPUT_FILES)
+      {
+         f.flush();
+      }
+   }
+
    public static OutputFile new_output_file (final String filename)
    {
       final OutputFile result;
@@ -66,6 +74,27 @@ public class OutputFile
       }
 
       buffered_writer = bf;
+   }
+
+   public void flush ()
+   {
+      try
+      {
+         buffered_writer.flush();
+      }
+      catch (final Exception e)
+      {
+         System.err.println
+         (
+            "[F] Could not flush output file \""
+            + filename
+            + "\":"
+         );
+
+         e.printStackTrace();
+
+         System.exit(-1);
+      }
    }
 
    public void write (final String data)

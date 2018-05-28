@@ -1,4 +1,0 @@
-procedure main(){
-	printmodels(onemodel(T,S,Vout))
-}
-

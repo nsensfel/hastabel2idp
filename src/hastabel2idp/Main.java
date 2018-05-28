@@ -6,6 +6,8 @@ import hastabel.World;
 import hastabel.lang.Formula;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Main
 {
@@ -52,9 +54,26 @@ public class Main
 
       write_idp(world, property, params);
 
-      OutputFile.close_all();
+      System.out.println("# Flushing generated files...");
+      OutputFile.flush_all();
 
-      System.out.println("# Done.");
+      if (params.get_idp_executable() == null)
+      {
+         System.out.println("# No IDP executable set. Stopping here.");
+         OutputFile.close_all();
+
+         return;
+      }
+
+      System.out.println("# Running IDP...");
+
+      System.out.println
+      (
+         "# Result: "
+         + run_idp(world, params)
+      );
+
+      OutputFile.close_all();
    }
 
    private static void load_file (final World world, final String filename)
@@ -143,9 +162,80 @@ public class Main
    {
       final Project project;
 
-
       project = new Project(params);
 
       project.generate("my_property", world, property);
+   }
+
+   private static String run_idp
+   (
+      final World world,
+      final Parameters params
+   )
+   {
+      final Process idp;
+      final BufferedReader idp_stdout, idp_stderr;
+      final String target;
+      final String[] args;
+
+      String line, result;
+
+      result = null;
+
+      args = new String[6];
+
+      args[0] = params.get_idp_executable();
+      args[1] = params.get_vocabulary_filename();
+      args[2] = params.get_structure_filename();
+      args[3] = params.get_theory_filename();
+      args[4] = params.get_vocabulary_out_filename();
+      args[5] = params.get_idp_main_filename();
+
+      try
+      {
+         idp =
+            (
+               new ProcessBuilder
+               (
+                  args[0],
+                  args[1],
+                  args[2],
+                  args[3],
+                  args[4],
+                  args[5]
+               )
+            ).start();
+
+         target = "my_property = {";
+
+         idp_stdout =
+            new BufferedReader(new InputStreamReader(idp.getInputStream()));
+
+         while ((line = idp_stdout.readLine()) != null)
+         {
+            System.out.println(line);
+
+            if (line.contains(target))
+            {
+               result = line;
+            }
+         }
+
+         idp_stderr =
+            new BufferedReader(new InputStreamReader(idp.getErrorStream()));
+
+         while ((line = idp_stderr.readLine()) != null)
+         {
+            System.err.println("[E] " + line);
+         }
+
+         idp.waitFor();
+      }
+      catch (final Exception e)
+      {
+         System.err.println(e.toString());
+      }
+
+      return result;
    }
 }

@@ -9,8 +9,8 @@ public class Parameters
    private final List<String> model_files;
    private final String property_file;
    private final String output_dir;
+   private final String idp_exec;
    private final boolean be_verbose;
-
    private final boolean are_valid;
 
    public static void print_usage ()
@@ -24,7 +24,7 @@ public class Parameters
          + "\t- <OUTPUT_DIR>\tDirectory in which to write the IDP model.\n"
          + "\t- <FILES>\tList of files to be loaded.\n"
          + "OPTIONS:\n"
-         + "\t- -v|--verbose\tPrint informative messages to STDOUT.\n"
+         + "\t- -e|--exec <IDP_EXEC>\tIDP executable path.\n"
          + "NOTES:\n"
          + "\t- Exactly one property file must be in <FILES>.\n"
          + "\t- Property files have a \".pro\" extension.\n"
@@ -37,7 +37,7 @@ public class Parameters
    public Parameters (final String... args)
    {
       boolean has_pro_file, has_error, should_be_verbose;
-      String prop_file;
+      String prop_file, idp_file;
 
       level_files = new ArrayList<String>();
       model_files = new ArrayList<String>();
@@ -53,18 +53,20 @@ public class Parameters
 
          are_valid = false;
          be_verbose = false;
+         idp_exec = null;
 
          return;
       }
 
       has_pro_file = false;
       has_error = false;
+      idp_file = null;
 
       output_dir = args[0];
 
       if
       (
-         (output_dir.equals("-v") || output_dir.equals("--verbose"))
+         (output_dir.equals("-e") || output_dir.equals("--exec"))
          /* || ... */
       )
       {
@@ -134,9 +136,14 @@ public class Parameters
                prop_file = args[i];
             }
          }
-         else if (args[i].equals("-v") || args[i].equals("--verbose"))
+         else if (args[i].equals("-e") || args[i].equals("--exec"))
          {
-            should_be_verbose = true;
+            i++;
+
+            if (i < args.length)
+            {
+               idp_file = args[i];
+            }
          }
          else
          {
@@ -151,6 +158,7 @@ public class Parameters
          }
       }
 
+      idp_exec = idp_file;
       property_file = prop_file;
 
       if (!has_pro_file)
@@ -167,6 +175,11 @@ public class Parameters
    public List<String> get_level_files ()
    {
       return level_files;
+   }
+
+   public String get_idp_executable ()
+   {
+      return idp_exec;
    }
 
    public List<String> get_model_files ()
@@ -202,6 +215,11 @@ public class Parameters
    public String get_structure_filename ()
    {
       return output_dir + "/01_structure.txt";
+   }
+
+   public String get_idp_main_filename ()
+   {
+      return "./99_idp_main.txt";
    }
 
    public boolean be_verbose ()
