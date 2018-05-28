@@ -146,6 +146,6 @@ public class Main
 
       project = new Project(params);
 
-      project.generate(world, property);
+      project.generate("my_property", world, property);
    }
 }

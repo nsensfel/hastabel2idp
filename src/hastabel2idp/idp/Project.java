@@ -25,7 +25,12 @@ public class Project
       theory = new Theory(params.get_theory_filename());
    }
 
-   public void generate (final World world, final Formula property)
+   public void generate
+   (
+      final String property_name,
+      final World world,
+      final Formula property
+   )
    {
       final Collection<Type> types;
       final Collection<Predicate> predicates;
@@ -73,7 +78,12 @@ public class Project
          }
       }
 
-      theory.add_formula(property);
+      theory.add_predicate
+      (
+         property_name,
+         world.get_variables_manager().get_all_seeked(),
+         property
+      );
 
       vocabulary.write_footer();
       structure.write_footer();
