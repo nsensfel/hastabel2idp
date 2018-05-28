@@ -33,6 +33,8 @@ public class Theory
    {
       boolean is_first;
 
+      out.write("   ");
+
       for (final Variable argument: arguments)
       {
          out.write("!");
@@ -59,9 +61,9 @@ public class Theory
          out.write(argument.get_name());
       }
 
-      out.write(") <=> ");
+      out.write(") <=> (");
       out.write(hastabel2idp.idp.lang.Formula.convert(formula).toString());
-      out.write(".");
+      out.write(").");
       out.insert_newline();
    }
 
