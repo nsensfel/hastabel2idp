@@ -5,6 +5,8 @@ import hastabel2idp.idp.Project;
 import hastabel.World;
 import hastabel.lang.Formula;
 
+import java.util.stream.Collectors;
+
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,9 +18,12 @@ public class Main
       final Parameters params;
       final World world;
       final Formula property;
+      final HastabelResult result;
+      final String idp_predicate_result;
 
       System.out.println("#### HaStABeL to IDP ####");
       System.out.println("# Parsing parameters...");
+
       params = new Parameters(args);
 
       if (!params.are_valid())
@@ -67,12 +72,23 @@ public class Main
 
       System.out.println("# Running IDP...");
 
-      System.out.println
+      idp_predicate_result = run_idp(world, params);
+
+      System.out.println("# Adding result to model...");
+
+      result = new HastabelResult(params);
+
+      result.add_solution
       (
-         "# Result: "
-         + run_idp(world, params)
+         params.get_property_name(),
+         world.get_variables_manager().get_all_seeked().stream().map
+         (
+            variable -> variable.get_type()
+         ).collect(Collectors.toList()),
+         idp_predicate_result
       );
 
+      System.out.println("# Done.");
       OutputFile.close_all();
    }
 
@@ -164,7 +180,7 @@ public class Main
 
       project = new Project(params);
 
-      project.generate("my_property", world, property);
+      project.generate(params.get_property_name(), world, property);
    }
 
    private static String run_idp
@@ -206,7 +222,7 @@ public class Main
                )
             ).start();
 
-         target = "my_property = {";
+         target = params.get_property_name() + " = {";
 
          idp_stdout =
             new BufferedReader(new InputStreamReader(idp.getInputStream()));

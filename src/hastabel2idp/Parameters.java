@@ -222,6 +222,11 @@ public class Parameters
       return "./99_idp_main.txt";
    }
 
+   public String get_property_name ()
+   {
+      return "my_property";
+   }
+
    public boolean be_verbose ()
    {
       return be_verbose;
