@@ -40,7 +40,7 @@ public class Theory
          out.write("!");
          out.write(argument.get_name());
          out.write(" [");
-         out.write(argument.get_type().get_name());
+         out.write(Project.type_name_to_idp(argument.get_type().get_name()));
          out.write("]: ");
       }
 

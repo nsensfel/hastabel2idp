@@ -34,7 +34,7 @@ public class Vocabulary
    public void add_type (final Type type)
    {
       out.write("   type ");
-      out.write(type.get_name());
+      out.write(Project.type_name_to_idp(type.get_name()));
       out.insert_newline();
    }
 
@@ -69,7 +69,7 @@ public class Vocabulary
             out.write(", ");
          }
 
-         out.write(sig_type.get_name());
+         out.write(Project.type_name_to_idp(sig_type.get_name()));
       }
 
       out.write(")");
@@ -97,17 +97,20 @@ public class Vocabulary
 
       if (0 < signature_size_m1)
       {
-         out.write(signature.get(0).get_name());
+         out.write(Project.type_name_to_idp(signature.get(0).get_name()));
       }
 
       for (int i = 1; i < signature_size_m1; ++i)
       {
          out.write(", ");
-         out.write(signature.get(i).get_name());
+         out.write(Project.type_name_to_idp(signature.get(i).get_name()));
       }
 
       out.write("):");
-      out.write(signature.get(signature_size_m1).get_name());
+      out.write
+      (
+         Project.type_name_to_idp(signature.get(signature_size_m1).get_name())
+      );
       out.insert_newline();
    }
 
@@ -118,6 +121,16 @@ public class Vocabulary
       final Collection<List<Type>> partial_signatures
    )
    {
+      if (relevant_signatures.size() == 0)
+      {
+         System.err.println
+         (
+            "[E] Predicate "
+            + predicate.get_name()
+            + " has no signatures."
+         );
+      }
+
       for (final List<Type> signature: relevant_signatures)
       {
          add_predicate_signature(predicate, signature);
@@ -166,7 +179,7 @@ public class Vocabulary
             out.write(", ");
          }
 
-         out.write(argument.get_type().get_name());
+         out.write(Project.type_name_to_idp(argument.get_type().get_name()));
       }
 
       out.write(")");

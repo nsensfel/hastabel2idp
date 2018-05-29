@@ -20,6 +20,16 @@ class FunctionCall extends Expression
       super(parent.get_function_type());
       this.parent = parent;
       this.params = params;
+
+      if (type == null)
+      {
+         System.err.println
+         (
+            "[E] Use of 'function' "
+            + parent.get_name()
+            + ", despite its function type being NULL."
+         );
+      }
    }
 
    public Predicate get_function ()
@@ -57,7 +67,9 @@ class FunctionCall extends Expression
       sb = new StringBuilder();
 
       sb.append(parent.get_name());
-      Project.parameters_to_suffix(params);
+      sb.append(Project.parameters_to_suffix(params));
+      sb.append("_");
+      sb.append(Project.type_name_to_idp(type.get_name()));
       sb.append("_f(");
 
       is_first = true;

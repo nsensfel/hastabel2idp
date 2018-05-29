@@ -127,7 +127,7 @@ public class Project
          if (t != null)
          {
             sb.append("_");
-            sb.append(t.get_name());
+            sb.append(Project.type_name_to_idp(t.get_name()));
          }
       }
 
@@ -145,10 +145,22 @@ public class Project
          if (param != null)
          {
             sb.append("_");
-            sb.append(param.get_type().get_name());
+            sb.append(Project.type_name_to_idp(param.get_type().get_name()));
          }
       }
 
       return sb.toString();
+   }
+
+   public static String type_name_to_idp (final String type_name)
+   {
+      /** IDP doesn't like us using the 'string' type name. **/
+
+      if (type_name.equals("string"))
+      {
+         return "hastastring";
+      }
+
+      return type_name;
    }
 }

@@ -1,5 +1,7 @@
 package hastabel2idp.idp.lang;
 
+import hastabel2idp.idp.Project;
+
 import hastabel.lang.Variable;
 
 import java.util.List;
@@ -67,7 +69,7 @@ public class Quantifier extends Formula
       sb.append(is_forall ? "!" : "?");
       sb.append(parent.get_name());
       sb.append(" [");
-      sb.append(parent.get_type().get_name());
+      sb.append(Project.type_name_to_idp(parent.get_type().get_name()));
       sb.append("]: (");
       sb.append(formula.toString());
       sb.append(")");

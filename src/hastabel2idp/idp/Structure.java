@@ -35,7 +35,7 @@ public class Structure
       boolean is_first_member;
 
       out.write("   ");
-      out.write(type.get_name());
+      out.write(Project.type_name_to_idp(type.get_name()));
       out.write("={");
       out.insert_newline();
 
@@ -135,6 +135,16 @@ public class Structure
       final Collection<List<Type>> partial_signatures
    )
    {
+      if (relevant_signatures.size() == 0)
+      {
+         System.err.println
+         (
+            "[E] Predicate "
+            + predicate.get_name()
+            + " has no signatures."
+         );
+      }
+
       for (final List<Type> signature: relevant_signatures)
       {
          add_predicate_signature(predicate, signature, false);
@@ -198,11 +208,14 @@ public class Structure
                out.write(", ");
             }
 
-            out.write(member.get(i).get_name());
+            out.write(Project.type_name_to_idp(member.get(i).get_name()));
          }
 
          out.write("->");
-         out.write(member.get(signature_size_m1).get_name());
+         out.write
+         (
+            Project.type_name_to_idp(member.get(signature_size_m1).get_name())
+         );
       }
 
       out.insert_newline();
