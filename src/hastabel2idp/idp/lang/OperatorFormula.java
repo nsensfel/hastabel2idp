@@ -13,6 +13,7 @@ class OperatorFormula extends Formula
       final List<Formula> params
    )
    {
+
       this.parent = parent;
       this.params = params;
    }

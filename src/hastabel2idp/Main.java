@@ -180,6 +180,8 @@ public class Main
 
       project = new Project(params);
 
+      System.out.println("# converting:\n" + property.toString());
+
       project.generate(params.get_property_name(), world, property);
    }
 

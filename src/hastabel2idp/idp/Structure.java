@@ -145,4 +145,80 @@ public class Structure
          add_predicate_signature(predicate, signature, true);
       }
    }
+
+   private void add_function_signature
+   (
+      final Predicate predicate,
+      final List<Type> signature
+   )
+   {
+      boolean is_first_member;
+      final Collection<List<Element>> relevant_members;
+
+      out.write("   ");
+      out.write(predicate.get_name());
+      out.write(Project.signature_to_suffix(signature));
+      out.write("_f={");
+      out.insert_newline();
+
+      is_first_member = true;
+
+      relevant_members = predicate.get_relevant_members(signature);
+
+      for (final List<Element> member: relevant_members)
+      {
+         final int signature_size, signature_size_m1;
+         boolean is_first_member_param;
+
+         signature_size = member.size();
+         signature_size_m1 = (signature_size - 1);
+
+         is_first_member_param = true;
+
+         if (is_first_member)
+         {
+            is_first_member = false;
+            out.write("      ");
+         }
+         else
+         {
+            out.write(";");
+            out.insert_newline();
+            out.write("      ");
+         }
+
+         for (int i = 0; i < signature_size_m1; ++i)
+         {
+            if (is_first_member_param)
+            {
+               is_first_member_param = false;
+            }
+            else
+            {
+               out.write(", ");
+            }
+
+            out.write(member.get(i).get_name());
+         }
+
+         out.write("->");
+         out.write(member.get(signature_size_m1).get_name());
+      }
+
+      out.insert_newline();
+      out.write("   }");
+      out.insert_newline();
+   }
+
+   public void add_function
+   (
+      final Predicate predicate,
+      final Collection<List<Type>> relevant_signatures
+   )
+   {
+      for (final List<Type> signature: relevant_signatures)
+      {
+         add_function_signature(predicate, signature);
+      }
+   }
 }

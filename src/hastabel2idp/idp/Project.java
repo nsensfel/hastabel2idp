@@ -4,6 +4,8 @@ import hastabel2idp.Parameters;
 
 import hastabel.World;
 
+import hastabel2idp.idp.lang.Expression;
+
 import hastabel.lang.Formula;
 import hastabel.lang.Predicate;
 import hastabel.lang.Type;
@@ -64,20 +66,28 @@ public class Project
             relevant_signatures = predicate.get_relevant_signatures();
             partial_signatures = predicate.get_partial_signatures();
 
-            vocabulary.add_predicate
-            (
-               predicate,
-               relevant_signatures,
-               partial_signatures
-            );
+            if (predicate.is_used_as_predicate())
+            {
+               vocabulary.add_predicate
+               (
+                  predicate,
+                  relevant_signatures,
+                  partial_signatures
+               );
 
-            structure.add_predicate
-            (
-               predicate,
-               relevant_signatures,
-               partial_signatures
-            );
+               structure.add_predicate
+               (
+                  predicate,
+                  relevant_signatures,
+                  partial_signatures
+               );
+            }
 
+            if (predicate.is_used_as_function())
+            {
+               vocabulary.add_function(predicate, relevant_signatures);
+               structure.add_function(predicate, relevant_signatures);
+            }
          }
       }
 
@@ -118,6 +128,24 @@ public class Project
          {
             sb.append("_");
             sb.append(t.get_name());
+         }
+      }
+
+      return sb.toString();
+   }
+
+   public static String parameters_to_suffix (final List<Expression> params)
+   {
+      final StringBuilder sb;
+
+      sb = new StringBuilder();
+
+      for (final Expression param: params)
+      {
+         if (param != null)
+         {
+            sb.append("_");
+            sb.append(param.get_type().get_name());
          }
       }
 

@@ -1,5 +1,7 @@
 package hastabel2idp.idp.lang;
 
+import hastabel2idp.idp.Project;
+
 import hastabel.lang.Predicate;
 
 import java.util.List;
@@ -55,7 +57,10 @@ class FunctionCall extends Expression
       sb = new StringBuilder();
 
       sb.append(parent.get_name());
-      // TODO: add signature suffix
+      Project.parameters_to_suffix(params);
+      sb.append("_f(");
+
+      is_first = true;
 
       for (final Expression param: params)
       {
