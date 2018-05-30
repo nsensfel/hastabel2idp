@@ -22,6 +22,8 @@ public class Theory
    {
       out.write("theory T:V {");
       out.insert_newline();
+      out.write("   {");
+      out.insert_newline();
    }
 
    public void add_predicate
@@ -33,7 +35,7 @@ public class Theory
    {
       boolean is_first;
 
-      out.write("   ");
+      out.write("      ");
 
       for (final Variable argument: arguments)
       {
@@ -61,7 +63,7 @@ public class Theory
          out.write(argument.get_name());
       }
 
-      out.write(") <=> (");
+      out.write(") <- (");
       out.write(formula.toString());
       out.write(").");
       out.insert_newline();
@@ -69,6 +71,8 @@ public class Theory
 
    public void write_footer ()
    {
+      out.write("   }");
+      out.insert_newline();
       out.write("}");
       out.insert_newline();
    }
