@@ -82,6 +82,6 @@ $(BIN_DIR):
 	mkdir -p $@
 
 ##### For my private use...
-publish: $(TARGET)
-	scp $< dreamhost:~/noot-noot/tabellion/jar/
+publish: $(TARGET) $(STANDALONE)
+	scp $^ dreamhost:~/noot-noot/tabellion/jar/
 
