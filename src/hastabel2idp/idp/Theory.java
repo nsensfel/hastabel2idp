@@ -28,7 +28,7 @@ public class Theory
    (
       final String name,
       final List<Variable> arguments,
-      final hastabel.lang.Formula formula
+      final hastabel2idp.idp.lang.Formula formula
    )
    {
       boolean is_first;
@@ -62,7 +62,7 @@ public class Theory
       }
 
       out.write(") <=> (");
-      out.write(hastabel2idp.idp.lang.Formula.convert(formula).toString());
+      out.write(formula.toString());
       out.write(").");
       out.insert_newline();
    }

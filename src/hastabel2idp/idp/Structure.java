@@ -234,4 +234,17 @@ public class Structure
          add_function_signature(predicate, signature);
       }
    }
+
+   public void add_constant
+   (
+      final String type,
+      final String name
+   )
+   {
+      out.write("   ");
+      out.write(name);
+      out.write("=");
+      out.write(name);
+      out.insert_newline();
+   }
 }

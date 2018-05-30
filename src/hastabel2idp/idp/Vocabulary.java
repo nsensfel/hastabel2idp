@@ -154,6 +154,19 @@ public class Vocabulary
       }
    }
 
+   public void add_constant
+   (
+      final String type,
+      final String name
+   )
+   {
+      out.write("   ");
+      out.write(name);
+      out.write(":");
+      out.write(type);
+      out.insert_newline();
+   }
+
    public void add_target_predicate
    (
       final String name,

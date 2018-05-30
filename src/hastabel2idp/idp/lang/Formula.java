@@ -1,23 +1,31 @@
 package hastabel2idp.idp.lang;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class Formula
 {
    public static hastabel2idp.idp.lang.Formula convert
    (
+      final Map<String, Expression> constants,
       final hastabel.lang.Formula hasta_f
    )
    {
       if (hasta_f instanceof hastabel.lang.Quantifier)
       {
-         return convert_quantifier((hastabel.lang.Quantifier) hasta_f);
+         return
+            convert_quantifier
+            (
+               constants,
+               (hastabel.lang.Quantifier) hasta_f
+            );
       }
       else if (hasta_f instanceof hastabel.lang.PredicateFormula)
       {
          return
             convert_predicate_formula
             (
+               constants,
                (hastabel.lang.PredicateFormula) hasta_f
             );
       }
@@ -26,12 +34,18 @@ public abstract class Formula
          return
             convert_operator_formula
             (
+               constants,
                (hastabel.lang.OperatorFormula) hasta_f
             );
       }
       else if (hasta_f instanceof hastabel.lang.Equals)
       {
-         return convert_equals((hastabel.lang.Equals) hasta_f);
+         return
+            convert_equals
+            (
+               constants,
+               (hastabel.lang.Equals) hasta_f
+            );
       }
       else
       {
@@ -48,6 +62,7 @@ public abstract class Formula
 
    private static hastabel2idp.idp.lang.Formula convert_quantifier
    (
+      final Map<String, Expression> constants,
       final hastabel.lang.Quantifier hasta_quantifier
    )
    {
@@ -55,26 +70,28 @@ public abstract class Formula
          new hastabel2idp.idp.lang.Quantifier
          (
             hasta_quantifier.get_variable(),
-            convert(hasta_quantifier.get_formula()),
+            convert(constants, hasta_quantifier.get_formula()),
             hasta_quantifier.is_forall()
          );
    }
 
    private static hastabel2idp.idp.lang.Formula convert_equals
    (
+      final Map<String, Expression> constants,
       final hastabel.lang.Equals hasta_equals
    )
    {
       return
          new hastabel2idp.idp.lang.Equals
          (
-            Expression.convert(hasta_equals.get_first_operand()),
-            Expression.convert(hasta_equals.get_second_operand())
+            Expression.convert(constants, hasta_equals.get_first_operand()),
+            Expression.convert(constants, hasta_equals.get_second_operand())
          );
    }
 
    private static hastabel2idp.idp.lang.Formula convert_predicate_formula
    (
+      final Map<String, Expression> constants,
       final hastabel.lang.PredicateFormula hasta_predicate_formula
    )
    {
@@ -85,13 +102,14 @@ public abstract class Formula
             hasta_predicate_formula.get_signature(),
             hasta_predicate_formula.get_parameters().stream().map
             (
-               hastabel2idp.idp.lang.Expression::convert
+               p -> hastabel2idp.idp.lang.Expression.convert(constants, p)
             ).collect(Collectors.toList())
          );
    }
 
    private static hastabel2idp.idp.lang.Formula convert_operator_formula
    (
+      final Map<String, Expression> constants,
       final hastabel.lang.OperatorFormula hasta_operator_formula
    )
    {
@@ -104,7 +122,7 @@ public abstract class Formula
             ),
             hasta_operator_formula.get_operands().stream().map
             (
-               hastabel2idp.idp.lang.Formula::convert
+               op -> convert(constants, op)
             ).collect(Collectors.toList())
          );
    }

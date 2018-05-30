@@ -6,16 +6,18 @@ import hastabel.World;
 
 import hastabel2idp.idp.lang.Expression;
 
-import hastabel.lang.Formula;
 import hastabel.lang.Predicate;
 import hastabel.lang.Type;
 import hastabel.lang.Element;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Collection;
 import java.util.List;
 
 public class Project
 {
+   private final Map<String, Expression> constants;
    private final VocabularyOut vocabulary_out;
    private final Vocabulary vocabulary;
    private final Structure structure;
@@ -27,18 +29,21 @@ public class Project
       vocabulary = new Vocabulary(params.get_vocabulary_filename());
       structure = new Structure(params.get_structure_filename());
       theory = new Theory(params.get_theory_filename());
+      constants = new HashMap<String, Expression>();
    }
 
    public void generate
    (
       final String property_name,
       final World world,
-      final Formula property
+      final hastabel.lang.Formula property
    )
    {
+      final hastabel2idp.idp.lang.Formula idp_property;
       final Collection<Type> types;
       final Collection<Predicate> predicates;
 
+      idp_property = hastabel2idp.idp.lang.Formula.convert(constants, property);
       types = world.get_types_manager().get_all();
       predicates = world.get_predicates_manager().get_all();
 
@@ -91,11 +96,23 @@ public class Project
          }
       }
 
+      for (final Map.Entry<String, Expression> constant: constants.entrySet())
+      {
+         final String name, type;
+
+         name = constant.getKey();
+         type =
+            Project.type_name_to_idp(constant.getValue().get_type().get_name());
+
+         vocabulary.add_constant(type, name);
+         structure.add_constant(type, name);
+      }
+
       theory.add_predicate
       (
          property_name,
          world.get_variables_manager().get_all_seeked(),
-         property
+         idp_property
       );
 
       vocabulary.add_target_predicate
