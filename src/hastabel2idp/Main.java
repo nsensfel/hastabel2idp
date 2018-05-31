@@ -80,6 +80,7 @@ public class Main
 
       result.add_solution
       (
+         world,
          params.get_property_name(),
          world.get_variables_manager().get_all_seeked().stream().map
          (

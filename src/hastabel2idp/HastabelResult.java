@@ -2,6 +2,8 @@ package hastabel2idp;
 
 import hastabel2idp.OutputFile;
 
+import hastabel.World;
+import hastabel.Strings;
 import hastabel.lang.Type;
 
 import java.util.List;
@@ -36,13 +38,19 @@ public class HastabelResult
 
    public void add_solution
    (
+      final World world,
       final String predicate,
       final List<Type> signature,
       final String idp_solution
    )
    {
       add_solution_to_level(predicate, signature);
-      add_solution_to_model(predicate, idp_solution);
+      add_solution_to_model
+      (
+         world.get_strings_manager(),
+         predicate,
+         idp_solution
+      );
    }
 
    private void add_solution_to_level
@@ -79,6 +87,7 @@ public class HastabelResult
 
    private void add_solution_to_model
    (
+      final Strings strings_manager,
       final String predicate,
       final String idp_solution
    )
@@ -106,8 +115,15 @@ public class HastabelResult
             model.write(predicate);
             model.write("(");
 
-            for (final String param: solution.split(","))
+            for (String param: solution.split(","))
             {
+               param = param.trim();
+
+               if (param.startsWith("_string_"))
+               {
+                  param = strings_manager.get_string_from_element_name(param);
+               }
+
                if (is_first)
                {
                   is_first = false;
