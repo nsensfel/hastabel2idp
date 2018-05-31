@@ -4,7 +4,9 @@ import hastabel2idp.OutputFile;
 
 import hastabel.World;
 import hastabel.Strings;
+
 import hastabel.lang.Type;
+import hastabel.lang.Variable;
 
 import java.util.List;
 
@@ -45,6 +47,7 @@ public class HastabelResult
    )
    {
       add_solution_to_level(predicate, signature);
+      add_solution_naming_to_level(world, predicate);
       add_solution_to_model
       (
          world.get_strings_manager(),
@@ -79,6 +82,38 @@ public class HastabelResult
          }
 
          level.write(type.get_name());
+      }
+
+      level.write(")");
+      level.insert_newline();
+   }
+
+   private void add_solution_naming_to_level
+   (
+      final World world,
+      final String predicate
+   )
+   {
+      boolean is_first;
+
+      is_first = true;
+
+      level.write("add_naming ");
+      level.write(predicate);
+      level.write("(");
+
+      for (final Variable var: world.get_variables_manager().get_all_seeked())
+      {
+         if (is_first)
+         {
+            is_first = false;
+         }
+         else
+         {
+            level.write(", ");
+         }
+
+         level.write(var.get_name());
       }
 
       level.write(")");
